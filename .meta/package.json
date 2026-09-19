@@ -1,0 +1,31 @@
+{
+    "id": "16212686674365818645",
+    "author": "djrosebudsteam",
+    "name": "remix_of_2879611305751680_1789857023",
+    "dependencies": [
+        {
+            "name": "meta/assistant",
+            "version": "0.6.1"
+        },
+        {
+            "name": "meta/assistant_experimental",
+            "version": "0.6.2"
+        },
+        {
+            "name": "meta/assistant_provisional",
+            "version": "0.6.0"
+        },
+        {
+            "name": "meta/editor_starter_kit",
+            "version": "1.14.5"
+        },
+        {
+            "name": "meta/shaders_bb",
+            "version": "0.0.14"
+        },
+        {
+            "name": "meta/worlds_sdk",
+            "version": "0.8.22"
+        }
+    ]
+}

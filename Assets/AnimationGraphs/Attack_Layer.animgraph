@@ -1,0 +1,312 @@
+{
+    "version": 2,
+    "graphs": [
+        {
+            "name": "main",
+            "type": "stateMachine",
+            "outputs": [
+                {
+                    "name": "pose",
+                    "type": "pose"
+                }
+            ],
+            ".editor": {
+                "inputNode": {
+                    "position": [
+                        300,
+                        150
+                    ]
+                }
+            },
+            "startingState": "Empty State",
+            "states": [
+                {
+                    "name": "Attack",
+                    "graph": "Attack",
+                    "phaseUpdateGraph": "Attack_phaseUpdateGraph",
+                    ".editor": {
+                        "position": [
+                            -200,
+                            -50
+                        ]
+                    }
+                },
+                {
+                    "name": "Empty State",
+                    "graph": "Empty State",
+                    "empty": true,
+                    ".editor": {
+                        "position": [
+                            300,
+                            -50
+                        ]
+                    }
+                }
+            ],
+            "transitions": [
+                {
+                    "from": "Attack",
+                    "to": "Attack",
+                    "event": "Attack",
+                    "blendTimeSec": 0.15
+                },
+                {
+                    "from": "Attack",
+                    "to": "Empty State",
+                    "blendTimeSec": 0.15,
+                    "blendEarly": false,
+                    "conditions": [
+                        {
+                            "variable": "__state_finished",
+                            "value": true,
+                            "operation": "equal"
+                        },
+                        {
+                            "variable": "AttackCooldown",
+                            "value": 0.1,
+                            "operation": "greater"
+                        }
+                    ]
+                },
+                {
+                    "from": "Attack",
+                    "to": "Empty State",
+                    "event": "StopAttacking",
+                    "blendTimeSec": 0.1
+                },
+                {
+                    "from": "Empty State",
+                    "to": "Attack",
+                    "event": "Attack",
+                    "blendTimeSec": 0.15
+                }
+            ]
+        },
+        {
+            "name": "Attack",
+            "type": "dataflow",
+            "inputs": [
+                {
+                    "name": "inputStatePhase",
+                    "type": "float"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "pose",
+                    "type": "pose"
+                }
+            ],
+            ".editor": {
+                "inputNode": {
+                    "position": [
+                        137.80237,
+                        44.145996
+                    ]
+                },
+                "outputNode": {
+                    "position": [
+                        1250,
+                        50
+                    ]
+                }
+            },
+            "nodes": [
+                {
+                    "name": "Attack",
+                    "type": "getAnimationVariable",
+                    "members": {
+                        "variable": "Attack"
+                    },
+                    ".editor": {
+                        "position": [
+                            150,
+                            -150
+                        ]
+                    }
+                },
+                {
+                    "name": "sampleAnim_1",
+                    "type": "sampleAnim",
+                    ".editor": {
+                        "position": [
+                            700,
+                            -50
+                        ]
+                    }
+                }
+            ],
+            "links": [
+                [
+                    "Attack:outputAnim",
+                    "sampleAnim_1:inputClip"
+                ],
+                [
+                    ":inputStatePhase",
+                    "sampleAnim_1:inputPhase"
+                ],
+                [
+                    "sampleAnim_1:outputPose",
+                    ":pose"
+                ]
+            ]
+        },
+        {
+            "name": "Attack_phaseUpdateGraph",
+            "type": "dataflow",
+            "inputs": [
+                {
+                    "name": "currentStatePhase",
+                    "type": "float"
+                },
+                {
+                    "name": "deltaTime",
+                    "type": "float"
+                },
+                {
+                    "name": "phasePerSecond",
+                    "type": "float"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "newStatePhase",
+                    "type": "float"
+                }
+            ],
+            ".editor": {
+                "inputNode": {
+                    "position": [
+                        -314.6929,
+                        84.58008
+                    ]
+                },
+                "outputNode": {
+                    "position": [
+                        880,
+                        385
+                    ]
+                }
+            },
+            "nodes": [
+                {
+                    "name": "calculateNewStatePhase",
+                    "type": "mathExpression",
+                    "members": {
+                        "expression": "currentStatePhase + phasePerSecond * deltaTime * playbackRate"
+                    },
+                    ".editor": {
+                        "position": [
+                            515,
+                            260
+                        ]
+                    }
+                },
+                {
+                    "name": "Math_exp_attack_speed",
+                    "type": "mathExpression",
+                    "members": {
+                        "expression": "(1/max(animation_duration_phase,0.01))/max(desire_duration,0.01)"
+                    },
+                    ".editor": {
+                        "position": [
+                            43.474457,
+                            368.30115
+                        ]
+                    }
+                },
+                {
+                    "name": "attackSpeed_1",
+                    "type": "getDynamicStoreValueFloat",
+                    "members": {
+                        "key": "attackDuration",
+                        "defaultValue": 1
+                    },
+                    ".editor": {
+                        "position": [
+                            -364.6345,
+                            360.05338
+                        ]
+                    }
+                }
+            ],
+            "links": [
+                [
+                    ":currentStatePhase",
+                    "calculateNewStatePhase:currentStatePhase"
+                ],
+                [
+                    ":deltaTime",
+                    "calculateNewStatePhase:deltaTime"
+                ],
+                [
+                    ":phasePerSecond",
+                    "calculateNewStatePhase:phasePerSecond"
+                ],
+                [
+                    "calculateNewStatePhase:value",
+                    ":newStatePhase"
+                ],
+                [
+                    "Math_exp_attack_speed:value",
+                    "calculateNewStatePhase:playbackRate"
+                ],
+                [
+                    ":phasePerSecond",
+                    "Math_exp_attack_speed:animation_duration_phase"
+                ],
+                [
+                    "attackSpeed_1:outputValue",
+                    "Math_exp_attack_speed:desire_duration"
+                ]
+            ]
+        },
+        {
+            "name": "Empty State",
+            "type": "dataflow",
+            "inputs": [
+                {
+                    "name": "inputStatePhase",
+                    "type": "float"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "pose",
+                    "type": "pose"
+                }
+            ],
+            "nodes": [],
+            "links": []
+        }
+    ],
+    "variables": [
+        {
+            "type": "assetId",
+            "name": "Attack",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "18128354183042990818",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "float",
+            "name": "attackDuration",
+            "source": "gameplay",
+            "default": 1
+        },
+        {
+            "type": "float",
+            "name": "AttackCooldown",
+            "source": "gameplay",
+            "default": 0
+        }
+    ],
+    "hierarchy": {
+        "packageOrRemoteId": "16212686674365818645",
+        "ingestionId": "4494789261054954399",
+        "targetId": "3998529611"
+    }
+}

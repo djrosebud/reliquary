@@ -1,0 +1,372 @@
+{
+    "version": 2,
+    "graphs": [
+        {
+            "name": "main",
+            "type": "stateMachine",
+            "outputs": [
+                {
+                    "name": "pose",
+                    "type": "pose"
+                }
+            ],
+            ".editor": {
+                "inputNode": {
+                    "position": [
+                        -508.7178,
+                        91.52556
+                    ]
+                }
+            },
+            "startingState": "Locomotion",
+            "states": [
+                {
+                    "name": "Locomotion",
+                    "graph": "Locomotion",
+                    "looping": true,
+                    ".editor": {
+                        "position": [
+                            -100,
+                            100
+                        ]
+                    }
+                }
+            ],
+            "transitions": []
+        },
+        {
+            "name": "Locomotion",
+            "type": "dataflow",
+            "inputs": [
+                {
+                    "name": "inputStatePhase",
+                    "type": "float"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "pose",
+                    "type": "pose"
+                }
+            ],
+            ".editor": {
+                "inputNode": {
+                    "position": [
+                        -391.71292,
+                        266.04135
+                    ]
+                },
+                "outputNode": {
+                    "position": [
+                        900,
+                        550
+                    ]
+                }
+            },
+            "nodes": [
+                {
+                    "name": "Speed",
+                    "type": "getDynamicStoreValueFloat",
+                    "members": {
+                        "key": "Speed"
+                    },
+                    ".editor": {
+                        "position": [
+                            -23.666016,
+                            202.22418
+                        ]
+                    }
+                },
+                {
+                    "name": "1D Blend Space",
+                    "type": "blendSpace1DNode",
+                    "members": {
+                        "looping": true,
+                        "xs": [
+                            0,
+                            1.5,
+                            5
+                        ],
+                        "anims": [
+                            "Idle",
+                            "Walk",
+                            "Run"
+                        ]
+                    },
+                    ".editor": {
+                        "position": [
+                            450,
+                            250
+                        ]
+                    }
+                },
+                {
+                    "name": "Blend Space 2D",
+                    "type": "blendSpace2DNode",
+                    "members": {
+                        "looping": true,
+                        "xs": [
+                            0,
+                            -180,
+                            -90,
+                            90,
+                            180,
+                            0,
+                            -180,
+                            -90,
+                            90,
+                            180,
+                            0,
+                            -180,
+                            -90,
+                            90,
+                            180
+                        ],
+                        "ys": [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            1.5,
+                            1.5,
+                            1.5,
+                            1.5,
+                            1.5,
+                            5,
+                            5,
+                            5,
+                            5,
+                            5
+                        ],
+                        "anims": [
+                            "Idle",
+                            "Idle",
+                            "Idle",
+                            "Idle",
+                            "Idle",
+                            "Walk Fwd",
+                            "Walk Back",
+                            "Walk Right",
+                            "Walk Left",
+                            "Walk Back",
+                            "Run Fwd",
+                            "Run Back",
+                            "Run Right",
+                            "Run Left",
+                            "Run Back"
+                        ]
+                    },
+                    ".editor": {
+                        "position": [
+                            400,
+                            500
+                        ]
+                    }
+                },
+                {
+                    "name": "MovementDirectionYaw_1",
+                    "type": "getDynamicStoreValueFloat",
+                    "members": {
+                        "key": "MovementDirectionYaw"
+                    },
+                    ".editor": {
+                        "position": [
+                            0,
+                            450
+                        ]
+                    }
+                }
+            ],
+            "links": [
+                [
+                    "Speed:outputValue",
+                    "1D Blend Space:x"
+                ],
+                [
+                    "Speed:outputValue",
+                    "Blend Space 2D:y"
+                ],
+                [
+                    "MovementDirectionYaw_1:outputValue",
+                    "Blend Space 2D:x"
+                ],
+                [
+                    "Blend Space 2D:outputPose",
+                    ":pose"
+                ]
+            ]
+        }
+    ],
+    "variables": [
+        {
+            "type": "float",
+            "name": "Speed",
+            "source": "gameplay",
+            "default": 0
+        },
+        {
+            "type": "bool",
+            "name": "Grounded",
+            "source": "gameplay",
+            "default": true
+        },
+        {
+            "type": "float",
+            "name": "TimeTillLand",
+            "source": "gameplay",
+            "default": 0
+        },
+        {
+            "type": "bool",
+            "name": "Jumping",
+            "source": "gameplay",
+            "default": false
+        },
+        {
+            "type": "assetId",
+            "name": "Run",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "1734568827981048514",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Idle",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "13792118736689503787",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Walk",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "13344906032519228930",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "bool",
+            "name": "ShouldStrafe",
+            "source": "gameplay",
+            "default": false
+        },
+        {
+            "type": "bool",
+            "name": "IsJumping",
+            "source": "gameplay",
+            "default": false
+        },
+        {
+            "type": "float",
+            "name": "MovementDirectionYaw",
+            "source": "gameplay",
+            "default": 0
+        },
+        {
+            "type": "bool",
+            "name": "IsAlive",
+            "source": "gameplay",
+            "default": true
+        },
+        {
+            "type": "bool",
+            "name": "IsRecentlyGrounded",
+            "source": "gameplay",
+            "default": true
+        },
+        {
+            "type": "assetId",
+            "name": "Run Fwd",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "1734568827981048514",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Run Back",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "3138465778260957326",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Run Left",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "8366254976969583149",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Run Right",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "14327636428843617991",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Walk Fwd",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "13344906032519228930",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Walk Back",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "4697977396927505942",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Walk Left",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "815674555851860241",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "assetId",
+            "name": "Walk Right",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "1206662426328166970",
+                "targetId": "3829385675"
+            }
+        }
+    ],
+    "hierarchy": {
+        "packageOrRemoteId": "16212686674365818645",
+        "ingestionId": "4494789261054954399",
+        "targetId": "3998529611"
+    }
+}

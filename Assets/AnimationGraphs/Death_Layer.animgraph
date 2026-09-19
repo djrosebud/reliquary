@@ -1,0 +1,257 @@
+{
+    "version": 2,
+    "graphs": [
+        {
+            "name": "main",
+            "type": "stateMachine",
+            "outputs": [
+                {
+                    "name": "pose",
+                    "type": "pose"
+                }
+            ],
+            ".editor": {
+                "inputNode": {
+                    "position": [
+                        -23.850342,
+                        55.8779
+                    ]
+                }
+            },
+            "startingState": "empty_state",
+            "states": [
+                {
+                    "name": "empty_state",
+                    "graph": "empty_state",
+                    "empty": true,
+                    ".editor": {
+                        "position": [
+                            247.21744,
+                            138.58626
+                        ]
+                    }
+                },
+                {
+                    "name": "death_state",
+                    "graph": "death_state",
+                    "phaseUpdateGraph": "death_state_phaseUpdateGraph",
+                    ".editor": {
+                        "position": [
+                            598.2745,
+                            78.92646
+                        ]
+                    }
+                }
+            ],
+            "transitions": [
+                {
+                    "from": "empty_state",
+                    "to": "death_state",
+                    "event": "Death",
+                    "blendTimeSec": 0.15
+                },
+                {
+                    "from": "death_state",
+                    "to": "empty_state",
+                    "event": "Revive",
+                    "blendTimeSec": 0.15
+                }
+            ]
+        },
+        {
+            "name": "empty_state",
+            "type": "dataflow",
+            "inputs": [
+                {
+                    "name": "inputStatePhase",
+                    "type": "float"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "pose",
+                    "type": "pose"
+                }
+            ],
+            "nodes": [],
+            "links": []
+        },
+        {
+            "name": "death_state",
+            "type": "dataflow",
+            "inputs": [
+                {
+                    "name": "inputStatePhase",
+                    "type": "float"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "pose",
+                    "type": "pose"
+                }
+            ],
+            ".editor": {
+                "inputNode": {
+                    "position": [
+                        -64.871826,
+                        516.66675
+                    ]
+                },
+                "outputNode": {
+                    "position": [
+                        967.5365,
+                        357.29846
+                    ]
+                }
+            },
+            "nodes": [
+                {
+                    "name": "Death",
+                    "type": "getAnimationVariable",
+                    "members": {
+                        "variable": "Death Anim"
+                    },
+                    ".editor": {
+                        "position": [
+                            -2.0334473,
+                            263.89825
+                        ]
+                    }
+                },
+                {
+                    "name": "sampleAnim",
+                    "type": "sampleAnim",
+                    "members": {
+                        "isDominantAnim": true
+                    },
+                    ".editor": {
+                        "position": [
+                            535.25104,
+                            360.5036
+                        ]
+                    }
+                }
+            ],
+            "links": [
+                [
+                    "Death:outputAnim",
+                    "sampleAnim:inputClip"
+                ],
+                [
+                    ":inputStatePhase",
+                    "sampleAnim:inputPhase"
+                ],
+                [
+                    "sampleAnim:outputPose",
+                    ":pose"
+                ]
+            ]
+        },
+        {
+            "name": "death_state_phaseUpdateGraph",
+            "type": "dataflow",
+            "inputs": [
+                {
+                    "name": "currentStatePhase",
+                    "type": "float"
+                },
+                {
+                    "name": "deltaTime",
+                    "type": "float"
+                },
+                {
+                    "name": "phasePerSecond",
+                    "type": "float"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "newStatePhase",
+                    "type": "float"
+                }
+            ],
+            ".editor": {
+                "outputNode": {
+                    "position": [
+                        880,
+                        385
+                    ]
+                }
+            },
+            "nodes": [
+                {
+                    "name": "calculateNewStatePhase",
+                    "type": "mathExpression",
+                    "members": {
+                        "expression": "currentStatePhase + phasePerSecond * deltaTime * playbackRate"
+                    },
+                    ".editor": {
+                        "position": [
+                            515,
+                            260
+                        ]
+                    }
+                },
+                {
+                    "name": "playbackRate",
+                    "type": "constFloat",
+                    "members": {
+                        "value": 1
+                    },
+                    ".editor": {
+                        "position": [
+                            100,
+                            430
+                        ]
+                    }
+                }
+            ],
+            "links": [
+                [
+                    ":currentStatePhase",
+                    "calculateNewStatePhase:currentStatePhase"
+                ],
+                [
+                    ":deltaTime",
+                    "calculateNewStatePhase:deltaTime"
+                ],
+                [
+                    ":phasePerSecond",
+                    "calculateNewStatePhase:phasePerSecond"
+                ],
+                [
+                    "playbackRate:outputValue",
+                    "calculateNewStatePhase:playbackRate"
+                ],
+                [
+                    "calculateNewStatePhase:value",
+                    ":newStatePhase"
+                ]
+            ]
+        }
+    ],
+    "variables": [
+        {
+            "type": "assetId",
+            "name": "Death Anim",
+            "source": "remap",
+            "default": {
+                "packageOrRemoteId": "16212686674365818645",
+                "ingestionId": "8882285131202328770",
+                "targetId": "3829385675"
+            }
+        },
+        {
+            "type": "float",
+            "name": "Speed",
+            "source": "gameplay",
+            "default": 0
+        }
+    ],
+    "hierarchy": {
+        "packageOrRemoteId": "16212686674365818645",
+        "ingestionId": "4494789261054954399",
+        "targetId": "3998529611"
+    }
+}

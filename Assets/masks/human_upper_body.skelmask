@@ -1,0 +1,280 @@
+{
+    "skeletonAsset": {
+        "packageOrRemoteId": "16212686674365818645",
+        "ingestionId": "4494789261054954399",
+        "targetId": "3998529611"
+    },
+    "jointWeightDefault": 0.0,
+    "jointWeights": [
+        {
+            "name": "spineLower_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "spineMiddle_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "spineUpper_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "chest_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "clavicle_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "clavicle_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "neck_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "shoulder_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "shoulder_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "head_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "neck_twist_01_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "neck_twist_02_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "elbow_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "elbow_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "eye_offset_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "eye_offset_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "muzzle_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handWrist_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handWrist_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "eye_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "eye_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "dentureBt_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "dentureTp_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handGrip_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handIndexMeta_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handMiddleMeta_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handPinkyMeta_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handRingMeta_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handThumbMeta_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handGrip_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handIndexMeta_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handMiddleMeta_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handPinkyMeta_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handRingMeta_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handThumbMeta_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "tongueBase_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handIndex_00_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handMiddle_00_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handPinky_00_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handRing_00_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handThumb_00_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handIndex_00_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handMiddle_00_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handPinky_00_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handRing_00_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handThumb_00_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "tongueTip_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handIndex_01_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handMiddle_01_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handPinky_01_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handRing_01_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handThumb_01_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handIndex_01_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handMiddle_01_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handPinky_01_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handRing_01_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handThumb_01_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handIndex_02_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handMiddle_02_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handPinky_02_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handRing_02_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handThumb_02_left_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handIndex_02_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handMiddle_02_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handPinky_02_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handRing_02_right_joint",
+            "weight": 1.0
+        },
+        {
+            "name": "handThumb_02_right_joint",
+            "weight": 1.0
+        }
+    ],
+    "floatWeightDefault": 0.0,
+    "floatWeights": []
+}

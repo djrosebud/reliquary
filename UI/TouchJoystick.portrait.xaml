@@ -1,0 +1,113 @@
+<!--
+  Floating touch joystick (ScreenSpace) — PORTRAIT build.
+
+  This project's `screenOrientation` is Portrait, so THIS is the build to wire to
+  the joystick entity's CustomUiPlatformComponent, and TouchJoystick.landscape
+  must stay false. The .landscape.xaml sibling ships alongside it for a later
+  orientation switch; wire exactly one.
+
+      d:DesignWidth / d:DesignHeight   1080 x 2340
+      ReferenceResolution              1080,2340
+
+  ROOT STRUCTURE follows creating-custom-ui: a <Component> wrapping a single
+  noesis:LayoutScaler whose one child is a Grid. Set the panel's
+  CustomUiPlatformComponent width AND height to 0 explicitly so the layout size is
+  inherited from d:DesignWidth/d:DesignHeight; with d:Design == ReferenceResolution
+  and width/height = 0 the LayoutScaler collapses to identity and only one net
+  scale applies. Do NOT leave width/height absent: an unset panel defaults to
+  1920x1080 and double-scales this panel. Setting them (or the legacy
+  vrLayoutWidth/Height) to any other nonzero value double-scales the same way.
+
+  The ring has no fixed home: it appears at the finger's touch-down point inside
+  the movement zone and disappears on release. TouchJoystick sets:
+    - `active`           -> ring container Visibility (only shown while touching)
+    - `originX/originY`  -> ring container TranslateTransform (top-left in design
+                            pixels, already offset so the ring centres on the
+                            finger). The component computes these as
+                            pos * DESIGN_WIDTH_PORTRAIT / DESIGN_HEIGHT_PORTRAIT,
+                            so this build MUST stay at the 1080x2340 design space.
+    - `knobX/knobY`      -> knob TranslateTransform (offset from the ring centre)
+
+  The Canvas is Stretch with no explicit Width/Height so it fills the scaled
+  design space. Touch is delivered by the shared TouchRouter (see
+  touch-routing.md), not Noesis hit-testing, so these visuals are display-only (no
+  Command bindings) and the entity's CustomUiPlatformComponent.isInteractable can
+  be false.
+-->
+<Component
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:noesis="clr-namespace:NoesisGUIExtensions"
+  mc:Ignorable="d"
+  d:DesignWidth="1080"
+  d:DesignHeight="2340">
+  <noesis:LayoutScaler ReferenceResolution="1080,2340">
+    <Grid>
+      <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <!-- Floating ring container: positioned at the touch-down point.
+             Monochrome translucent theme matching the Figma default design
+             (outer:inner:handle = 475:230:90). -->
+        <Grid Width="475" Height="475" Canvas.Left="0" Canvas.Top="0">
+          <Grid.Visibility>
+            <Binding Path="active" FallbackValue="Collapsed">
+              <Binding.Converter>
+                <BooleanToVisibilityConverter />
+              </Binding.Converter>
+            </Binding>
+          </Grid.Visibility>
+          <Grid.RenderTransform>
+            <TranslateTransform X="{Binding originX}" Y="{Binding originY}" />
+          </Grid.RenderTransform>
+
+          <!-- Outer ring: transparent fill, faint white-alpha stroke. -->
+          <Ellipse
+            Width="475"
+            Height="475"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Stroke="#0DFFFFFF"
+            StrokeThickness="3" />
+
+          <!-- Inner ring: translucent black fill, white-alpha stroke. -->
+          <Ellipse
+            Width="230"
+            Height="230"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Fill="#33000000"
+            Stroke="#33FFFFFF"
+            StrokeThickness="3" />
+
+          <!-- Direction arrows on the inner ring (matches the built-in joystick).
+               Copied to UI/icons/ and referenced project-root-relative. -->
+          <Image
+            Source="UI/icons/joystick_arrows.png"
+            Width="195"
+            Height="195"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Stretch="Fill"
+            Opacity="0.5" />
+
+          <!-- Handle: white-alpha knob; follows the finger, clamped to the ring. -->
+          <Ellipse
+            Width="90"
+            Height="90"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Fill="#CCFFFFFF"
+            Stroke="#4DFFFFFF"
+            StrokeThickness="3">
+            <Ellipse.RenderTransform>
+              <TranslateTransform X="{Binding knobX}" Y="{Binding knobY}" />
+            </Ellipse.RenderTransform>
+          </Ellipse>
+        </Grid>
+
+      </Canvas>
+    </Grid>
+  </noesis:LayoutScaler>
+</Component>

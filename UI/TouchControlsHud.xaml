@@ -1,0 +1,226 @@
+<!--
+  On-screen touch HUD (ScreenSpace) — PORTRAIT build.
+
+  This project's `screenOrientation` is Portrait, so THIS is the build to wire to
+  the HUD entity's CustomUiPlatformComponent, and TouchControlsHud.landscape must
+  stay false. The .landscape.xaml sibling ships alongside it for a later
+  orientation switch; wire exactly one.
+
+      d:DesignWidth / d:DesignHeight   1080 x 2340
+      ReferenceResolution              1080,2340
+
+  ROOT STRUCTURE follows creating-custom-ui: a <Component> wrapping a single
+  noesis:LayoutScaler whose one child is a Grid. LayoutScaler scales the
+  1080x2340 (19.5:9, matching the Figma frame) design space onto the device.
+  CRITICAL: set the panel's
+  CustomUiPlatformComponent width AND height to 0 explicitly so the layout size is
+  inherited from d:DesignWidth/d:DesignHeight above. With d:Design ==
+  ReferenceResolution and width/height = 0, the LayoutScaler collapses to an
+  identity transform and only ONE net scale applies. Do NOT leave width/height
+  absent: an unset panel defaults to 1920x1080 and double-scales this portrait
+  panel. Setting them (or the legacy vrLayoutWidth/Height) to any other nonzero
+  value double-scales the same way.
+
+  The Canvas is HorizontalAlignment/VerticalAlignment=Stretch with no explicit
+  Width/Height, so it fills the scaled design space and Canvas.Right/Canvas.Bottom
+  anchor to the physical screen corner (LayoutScaler adds no centering; a fill
+  child overscans the non-limiting axis rather than letterboxing).
+
+  Buttons sit in a bottom-right thumb cluster, matching the built-in
+  GameplayControls. Jump (160, jump tier) is the corner button. Interact and Drop
+  (110, utility tier) are CONTEXTUAL: they are authored hidden and shown only by
+  their project-glue bridges — InteractionControlsBridge on WSDK candidacy, and
+  AttachableControlsBridge while a droppable AttachableObject is held. Each button
+  shows a white gameplay icon (copied to UI/icons/, referenced project-root-
+  relative), not a text label.
+
+  INPUT COMES FROM THE ROUTER, NOT NOESIS. Touch is delivered by the shared
+  TouchRouter, so these buttons have NO Command bindings and are display-only
+  visuals; the entity's CustomUiPlatformComponent.isInteractable can be false.
+  Each button's hit region is a normalized rect in TouchControlsHud.ts
+  (BUTTON_CONFIGS, portrait set); the Canvas position and size below MUST match
+  that rect.
+
+  Each button's pressed visual (a press-down ScaleTransform) binds to its
+  `*Pressed` flag, which the router handlers set; Visibility and IsEnabled bind to
+  the `*Visible` / `*Enabled` flags so the wrapper API (showButton / hideButton /
+  setButtonEnabled) still toggles them at runtime.
+
+  The rest ScaleTransform is a Style <Setter> in TouchButtonStyle ON PURPOSE: a
+  Style DataTrigger can override a Style setter but NOT a LOCAL value. Never move
+  the rest RenderTransform/ScaleTransform onto the Button/Grid element as a local
+  value, or the *Pressed DataTrigger loses precedence (Noesis: local > style
+  trigger > style setter) and the press visual silently dies on tap AND hold.
+-->
+<Component
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:noesis="clr-namespace:NoesisGUIExtensions"
+  mc:Ignorable="d"
+  d:DesignWidth="1080"
+  d:DesignHeight="2340">
+  <noesis:LayoutScaler ReferenceResolution="1080,2340">
+    <Grid>
+      <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+        <Canvas.Resources>
+          <!-- Shared round touch-button style. Monochrome translucent theme
+               matching the built-in GameplayControls.xaml: translucent black fill
+               (#FF000000 @ 0.4) with a thin white-alpha stroke (#FFFFFFFF @ 0.2).
+               The button Content is a white gameplay icon Image set per button. -->
+          <Style x:Key="TouchButtonStyle" TargetType="Button">
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="RenderTransform">
+              <Setter.Value>
+                <ScaleTransform ScaleX="1" ScaleY="1" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+              <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                  <Grid x:Name="bg">
+                    <Ellipse Stretch="UniformToFill" StrokeThickness="1">
+                      <Ellipse.Fill>
+                        <SolidColorBrush Color="#FF000000" Opacity="0.4" />
+                      </Ellipse.Fill>
+                      <Ellipse.Stroke>
+                        <SolidColorBrush Color="#FFFFFFFF" Opacity="0.2" />
+                      </Ellipse.Stroke>
+                    </Ellipse>
+                    <ContentPresenter
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" />
+                  </Grid>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                      <Setter TargetName="bg" Property="Opacity" Value="0.4" />
+                    </Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </Canvas.Resources>
+
+        <!-- Jump: jump tier, bottom-right corner. 160px. Rect must match
+             BUTTON_CONFIGS 'Jump' (portrait) in TouchControlsHud.ts.
+             icn_Jump = the jump glyph. -->
+        <Button
+          Width="160"
+          Height="160"
+          Canvas.Right="88"
+          Canvas.Bottom="654"
+          IsEnabled="{Binding Path=jumpEnabled}">
+          <Button.Content>
+            <Image
+              Source="UI/icons/icn_Jump.png"
+              Width="136"
+              Height="136"
+              Stretch="Uniform" />
+          </Button.Content>
+          <Button.Style>
+            <Style TargetType="Button" BasedOn="{StaticResource TouchButtonStyle}">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding jumpPressed}" Value="True">
+                  <Setter Property="RenderTransform">
+                    <Setter.Value>
+                      <ScaleTransform ScaleX="0.92" ScaleY="0.92" />
+                    </Setter.Value>
+                  </Setter>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Button.Style>
+          <Button.Visibility>
+            <Binding Path="jumpVisible" FallbackValue="Visible">
+              <Binding.Converter>
+                <BooleanToVisibilityConverter />
+              </Binding.Converter>
+            </Binding>
+          </Button.Visibility>
+        </Button>
+
+        <!-- Interact: utility tier, 110px. CONTEXTUAL — interactVisible starts
+             false and InteractionControlsBridge shows it only while the
+             interactor has a WSDK candidate. Rect must match BUTTON_CONFIGS
+             'Interact' (portrait) in TouchControlsHud.ts. -->
+        <Button
+          Width="110"
+          Height="110"
+          Canvas.Right="90"
+          Canvas.Bottom="260"
+          IsEnabled="{Binding Path=interactEnabled}">
+          <Button.Content>
+            <Image
+              Source="UI/icons/icn_Interact.png"
+              Width="94"
+              Height="94"
+              Stretch="Uniform" />
+          </Button.Content>
+          <Button.Style>
+            <Style TargetType="Button" BasedOn="{StaticResource TouchButtonStyle}">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding interactPressed}" Value="True">
+                  <Setter Property="RenderTransform">
+                    <Setter.Value>
+                      <ScaleTransform ScaleX="0.92" ScaleY="0.92" />
+                    </Setter.Value>
+                  </Setter>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Button.Style>
+          <Button.Visibility>
+            <Binding Path="interactVisible" FallbackValue="Collapsed">
+              <Binding.Converter>
+                <BooleanToVisibilityConverter />
+              </Binding.Converter>
+            </Binding>
+          </Button.Visibility>
+        </Button>
+
+        <!-- Drop: utility tier, 110px. CONTEXTUAL — dropVisible starts false and
+             AttachableControlsBridge shows it only while a droppable
+             AttachableObject is held. Rect must match BUTTON_CONFIGS 'Drop'
+             (portrait) in TouchControlsHud.ts. -->
+        <Button
+          Width="110"
+          Height="110"
+          Canvas.Right="249"
+          Canvas.Bottom="95"
+          IsEnabled="{Binding Path=dropEnabled}">
+          <Button.Content>
+            <Image
+              Source="UI/icons/icn_Drop.png"
+              Width="94"
+              Height="94"
+              Stretch="Uniform" />
+          </Button.Content>
+          <Button.Style>
+            <Style TargetType="Button" BasedOn="{StaticResource TouchButtonStyle}">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding dropPressed}" Value="True">
+                  <Setter Property="RenderTransform">
+                    <Setter.Value>
+                      <ScaleTransform ScaleX="0.92" ScaleY="0.92" />
+                    </Setter.Value>
+                  </Setter>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Button.Style>
+          <Button.Visibility>
+            <Binding Path="dropVisible" FallbackValue="Collapsed">
+              <Binding.Converter>
+                <BooleanToVisibilityConverter />
+              </Binding.Converter>
+            </Binding>
+          </Button.Visibility>
+        </Button>
+
+      </Canvas>
+    </Grid>
+  </noesis:LayoutScaler>
+</Component>
